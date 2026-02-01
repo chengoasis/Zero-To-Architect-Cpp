@@ -2,15 +2,17 @@
 #define TINY_UNIQUE_PTR_H_
 
 #include <utility> // for std::exchange
+#include <iostream>
 
 // 命名空间管理，防止污染全局
 namespace infra {
 
-// 1. 类定义
+// 类定义
 template<typename T>
 class UniquePtr {
-public:
-  // 1. 默认构造与裸指针构造合并
+ public:
+  // 1. 默认构造
+  // 与裸指针构造合并
   // explicit: 防止隐式转换 (e.g., UniquePtr<int> p = 10; -> Error)
   // noexcept: 构造函数不应抛出异常
   explicit UniquePtr(T* ptr = nullptr) noexcept : ptr_(ptr) {}
@@ -26,7 +28,7 @@ public:
   UniquePtr(const UniquePtr& other) = delete;
   UniquePtr& operator=(const UniquePtr& other) = delete;
 
-  // 移动构造（Move Constructor）
+  // 4. 移动构造（Move Constructor）
   // 从临时对象中"窃取"资源
   // 注意：参数不能是 const，否则无法置空源指针
   UniquePtr(UniquePtr&& other) noexcept {
@@ -50,7 +52,7 @@ public:
     return *this;
   }
 
-  // 6. 观察器 (Observers)
+  // 访问器
   // const 修饰成员函数，表示该操作不会修改成员变量
   T& operator*() const {
     return *ptr_;
@@ -67,7 +69,7 @@ public:
     return ptr_ != nullptr;
   }
 
-private:
+ private:
   T* ptr_ = nullptr;
 };
 
