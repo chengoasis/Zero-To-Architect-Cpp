@@ -11,12 +11,6 @@
 *.gch
 *.pch
 
-# Linker files
-*.ilk
-
-# Debugger Files
-*.pdb
-
 # Compiled Dynamic libraries
 *.so
 *.dylib
@@ -35,7 +29,19 @@
 # Executables
 *.exe
 *.out
-*.app
+app
+test_app
 
-# debug information files
-*.dwo
+# CMake build folders
+build/
+cmake-build-debug/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*~

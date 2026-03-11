@@ -7,6 +7,7 @@ template <typename T>
 class SharedPtr {
  public:
   // 1. 构造函数
+  // explicit：防止构造函数或转换运算符的隐式转换，要求必须显式调用
   // 刚出生：引用计数初始化为 1 （在堆heap上new出来）
   explicit SharedPtr(T* ptr = nullptr) : ptr_(ptr), ref_count_(new int(1)) {
     // 如果接管的是空指针，计数器可以直接删掉或者特殊处理

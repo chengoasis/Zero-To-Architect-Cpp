@@ -23,7 +23,7 @@ void OldWay() {
 
 **RAII (Resource Acquisition Is Initialization)** 是 C++ 最重要的编程惯用法。
 
-- **核心**: 将资源的生命周期绑定到**栈对象**的生命周期。
+- **核心**: 将资源的生命周期绑定到**栈对象**的生命周期。[ 栈对象离开作用域后立即被释放！ ]
 - **构造**: 获取资源（如 new, open file, lock）。
 - **析构**: 释放资源（如 delete, close file, unlock）。
 - **优势**: 无论函数是如何返回的（正常返回 or 抛出异常），**栈对象的析构函数一定会被调用，从而保证资源释放。**
@@ -59,11 +59,8 @@ void OldWay() {
 
 - **Answer**: 需要考虑两个层面。**引用计数本身 (Control Block)**：是**线程安全**的。标准库通常使用 `std::atomic` 来操作计数，保证多线程拷贝/析构 `shared_ptr` 不会乱。**管理的对象 (Managed Object)**：**不是线程安全**的。如果多个线程同时读写同一个 `shared_ptr` 指向的对象，必须手动加锁 (std::mutex)。
 
-### Q3: 为什么要用 std::make_shared？
 
-- **Answer**: 性能与内存碎片优化。**普通 的new:**  `std::shared_ptr<T> p(new T);` 会触发**两次**堆内存分配（一次分配 T，一次分配 ControlBlock）。**make_shared： `auto p = std::make_shared<T>();` 只触发一次分配，它会分配一块足够大的连续内存同时存放 T 和 ControlBlock。这不仅减少了 malloc 开销，还提高了 CPU 缓存命中率。**
-
-### Q4: 什么是循环引用 ？如何解决？
+### Q3: 什么是循环引用 ？如何解决？
 
 - **Answer**: 当 A 指向 B，B 也指向 A，且都用 `shared_ptr` 时，引用计数永远减不到 0，导致内存泄漏。
 - **Solution**: 将其中一方（通常是“下级”指回“上级”的指针）改为 `std::weak_ptr`。`weak_ptr` 不增加引用计数。
