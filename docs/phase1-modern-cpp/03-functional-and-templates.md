@@ -23,10 +23,13 @@ Lambda 允许我们“就地”编写逻辑，并通过**捕获列表 (Capture L
 **坑❗❗❗**：**绝不能将带有 `[&]` 捕获的 Lambda 返回到外部作用域或跨线程传递！**一旦原作用域结束，外部变量被销毁，Lambda 内部将持有一个致命的**悬空引用 (Dangling Reference)**。
 
 ### 2.2 std::function (万能函数容器)
-`std::function<Ret(Args...)>` 是一个多态的函数包装器。
 
-* **优点**：可以装下任何匹配签名的可调用对象（函数指针、Lambda、仿函数等）。
-* **代价**：它底层使用了**类型擦除 (Type Erasure)**。**如果 Lambda 捕获的数据体积过大，`std::function` 会偷偷在堆上分配内存 (Heap Allocation)，且由于间接调用，会阻碍编译器的内联优化 (Inline)。**在极致性能的底层基建中需谨慎使用。
+`std::function` 是 C++11 引入的**通用多态函数包装器**，可以存储、复制和调用任何**可调用对象**。
+
+基本语法：`std::function<返回类型(参数类型...)> 变量名;`
+
+- **优点**：可以装下任何匹配签名的可调用对象（函数指针、Lambda、仿函数等）。
+- **代价**：它底层使用了**类型擦除 (Type Erasure)**。如果 Lambda 捕获的数据体积过大，`std::function` 会偷偷在堆上分配内存 (Heap Allocation)，且由于间接调用，会阻碍编译器的内联优化 (Inline)。在极致性能的底层基建中需谨慎使用。
 
 ### 2.3 C++ 模板 (Templates) 与万能引用 (Universal Reference)
 **为了规避 `std::function` 的性能开销，我们采用泛型编程。**
